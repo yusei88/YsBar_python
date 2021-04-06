@@ -4,18 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
-    <link rel="stylesheet" href="{{ url_for('static', filename= 'css/style.css') }}">
+    <link rel="stylesheet" href="{{ staticfile('style.css')}}">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Train+One&display=swap" type='text/css'>
     <title>{{ title }}</title>
     <style>
-        header h1{
-        margin: 0;
-        font-weight: normal;
-        text-align: center;
-        font-size: 60px;
-        font-family:'Train One', cursive;
-        text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #fff, 0 0 40px #ff0040, 0 0 70px #ff0040, 0 0 80px #ff0040, 0 0 100px #ff0040, 0 0 150px #ff0040;
-        }
+        
     </style>
 </head>
 <body>
@@ -27,10 +20,6 @@
     {% block content %}
     <!-- ここにメインコンテンツがくる -->
     {% endblock %}
-    <footer>
-        <hr>
-        <p style="text-align: right;">Sato Yusei</p>
-    </footer>
     </div>
 </body>
 </html>
