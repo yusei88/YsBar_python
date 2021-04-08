@@ -1,7 +1,35 @@
-from flask import Flask, render_template
-import os
+from flask import Flask, render_template, request, redirect, session
+from sqlalchemy import create_engine, Column, Integer, String, DATETIME
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+import os, hashlib
 
 app = Flask(__name__)
+
+#DBの作成
+engine = create_engine('sqlite:///ysbar.db',echo=True)
+Base = declarative_base()
+class User(Base):
+    __tablename__ = 'user'
+    id = Column(Integer,primary_key=True,autoincrement=True,nullable=False,unique=True)
+    name = Column(String(100),nullable=False)
+    pswd = Column(String(256),nullable=False)
+
+class Menu(Base):
+    __tablename__ = 'menu'
+    id = Column(Integer,primary_key=True,autoincrement=True,nullable=False,unique=True)
+    name = Column(String(100),nullable=False)
+    path = Column(String(100))
+    text = Column(String(300))
+
+class Order(Base):
+    __tablename__ = 'order'
+    id = Column(Integer,primary_key=True,autoincrement=True,nullable=False,unique=True)
+    date = Column(DATETIME,nullable=False)
+    user_id = Column(Integer,nullable=False)
+    menu_id = Column(Integer,nullable=False)
+
+Base.metadata.create_all(bind=engine)#db作成の実行
 
 @app.context_processor
 def add_staticfile():
@@ -11,12 +39,46 @@ def add_staticfile():
         return '/static/' + fname + '?v=' + str(mtime)
     return dict(staticfile=staticfile_cp)
 
-@app.route('/')
+@app.route('/',methods=['GET'])
 def hello():
-    name = "Hello World"
     return render_template('index.html', title="Y'sBAR")
 
-@app.route('/gin')
+@app.route('/login',methods=['GET'])
+def login_get():
+    return render_template('login.html', title="ログイン",miss=False)
+@app.route('/login',methods=['POST'])
+def login_post():
+    enter_name = request.form.get('name').strip()
+    enter_pswd = str(hashlib.sha256(request.form["pswd"].strip().encode("utf-8")).digest())
+    session = sessionmaker(bind=engine)()#db用のsessionの作成
+    print("Name : ",enter_name)
+    print("Pass : ",enter_pswd)
+    exist = session.query(User).filter(User.name == enter_name).count()#user名が登録されているか確認する
+    print("exist : ",exist)
+    if exist == 0:#もしユーザー名が登録されていなければパスワードとともに登録する
+        print("NewUser!!Welcome!")
+        new_user = User(name=enter_name,pswd=enter_pswd)#インスタンス作成
+        session.add(new_user)#追加
+        session.commit()#コミット
+        session.close()#sessionの解放
+        return redirect('/')
+    else:#もしユーザー名が登録されていればパスワードのハッシュ値を確認
+        session.close()#sessionの解放
+        user = session.query(User).filter(User.name == enter_name).one()
+        print("Name : ",user.name)
+        print("ResistedPass : ",user.pswd)
+        print("SendedPass : ",enter_pswd)
+        if user.pswd == enter_pswd:
+            #パスワードがあっていればトップページへ
+            print("ResistedUser!!Welcome!")
+            return redirect('/')
+        else:
+            #パスワードが間違っていればもう一度
+            print("ユーザー名かPasswordが間違っています。")
+            return render_template('/login.html',title="ログイン",miss=True)
+
+
+@app.route('/gin',methods=['GET'])
 def menu():
     return render_template('gin.html', title="gin")
 
