@@ -2,9 +2,20 @@ from flask import Flask, render_template, request, redirect, session
 from sqlalchemy import create_engine, Column, Integer, String, DATETIME
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+from werkzeug.utils import secure_filename
 import os, hashlib
 
 app = Flask(__name__)
+
+#画像アップロードの設定
+UPLOAD_FOLDER = './uploads'
+ALLOWED_EXTENSIONS = set(['png', 'jpg'])
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['SECRET_KEY'] = os.urandom(24)
+
+def allowed_file(filename):
+    return '.' in filename and \
+        filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
 #DBの作成
 engine = create_engine('sqlite:///ysbar.db',echo=True)
@@ -20,7 +31,7 @@ class Menu(Base):
     id = Column(Integer,primary_key=True,autoincrement=True,nullable=False,unique=True)
     name = Column(String(100),nullable=False)
     path = Column(String(100))
-    text = Column(String(300))
+    caption = Column(String(300))
 
 class Order(Base):
     __tablename__ = 'order'
@@ -77,10 +88,37 @@ def login_post():
             print("ユーザー名かPasswordが間違っています。")
             return render_template('/login.html',title="ログイン",miss=True)
 
-
 @app.route('/gin',methods=['GET'])
 def menu():
-    return render_template('gin.html', title="gin")
+    session = sessionmaker(bind=engine)()#db用のsessionの作成
+    data = session.query(Menu).all()
+    return render_template('gin.html', title="gin",data=data)
+
+@app.route('/resister',methods=['GET'])
+def resist_get():
+    return render_template('menu_resist.html', title="メニュー登録")
+
+@app.route('/resister',methods=['POST'])
+def resist_post():
+    enter_name = request.form.get('name').strip()
+    enter_caption = request.form.get('caption').strip()
+    enter_img = request.files['img']
+    if enter_img and allowed_file(enter_img.filename):
+        session = sessionmaker(bind=engine)()#db用のsessionの作成
+        enter_img.save(os.path.join(app.config['UPLOAD_FOLDER'], enter_img.filename))
+        img_path = '/uploads/' + enter_img.filename
+        exist = session.query(Menu).filter(Menu.name == enter_name).count()#カクテルの名前が登録されているか確認する
+        if exist == 0:#メニューに名前が登録されていなければ登録する
+            print("NewMenu!!Welcome!")
+            new_menu = Menu(name=enter_name,path=img_path,caption=enter_caption)#インスタンス作成
+            session.add(new_menu)#追加
+            session.commit()#コミット
+            session.close()#sessionの解放
+            return '<p>登録しました。</p>'
+        else:
+            return '<p>存在するメニューです</p>'
+    else:
+        return '<p>ファイルが不正です。</p>'
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -2,27 +2,15 @@
 {% block content %}
 <div class="content">
     <div class="row">
+        {% for item in data%}
         <div class="col-md-2 offset-md-2">
-            <img class="item" src="../static/images/gin/ギムレット.png" alt="">
+            <img class="item" src="{{'.'+item.path}}" alt="{{item.name}}">
             <div class="inner">
-                <p>コアントロー</p>
+                <p>{{item.name}}</p>
             </div>
             <hr>
         </div>
-        <div class="col-md-2 offset-md-1">
-            <img class="item" src="../static/images/gin/ジンバック.png" alt="">
-            <div class="inner">
-                <p>コアントロー</p>
-            </div>
-            <hr>
-        </div>
-        <div class="col-md-2 offset-md-1">
-            <img class="item" src="../static/images/gin/トムコリンズ.png" alt="">
-            <div class="inner">
-                <p>コアントロー</p>
-            </div>
-            <hr>
-        </div>
+        {% endfor %}
     </div>
 </div>
 {% endblock %}
