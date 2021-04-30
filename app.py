@@ -8,7 +8,7 @@ import os, hashlib
 app = Flask(__name__)
 
 #画像アップロードの設定
-UPLOAD_FOLDER = './uploads'
+UPLOAD_FOLDER = './static/uploads'
 ALLOWED_EXTENSIONS = set(['png', 'jpg'])
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['SECRET_KEY'] = os.urandom(24)
@@ -31,6 +31,7 @@ class Menu(Base):
     id = Column(Integer,primary_key=True,autoincrement=True,nullable=False,unique=True)
     name = Column(String(100),nullable=False)
     path = Column(String(100))
+    base = Column(String(100))
     caption = Column(String(300))
 
 class Order(Base):
@@ -106,7 +107,7 @@ def resist_post():
     if enter_img and allowed_file(enter_img.filename):
         session = sessionmaker(bind=engine)()#db用のsessionの作成
         enter_img.save(os.path.join(app.config['UPLOAD_FOLDER'], enter_img.filename))
-        img_path = '/uploads/' + enter_img.filename
+        img_path = './static/uploads/' + enter_img.filename
         exist = session.query(Menu).filter(Menu.name == enter_name).count()#カクテルの名前が登録されているか確認する
         if exist == 0:#メニューに名前が登録されていなければ登録する
             print("NewMenu!!Welcome!")

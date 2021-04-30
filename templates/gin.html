@@ -3,12 +3,13 @@
 <div class="content">
     <div class="row">
         {% for item in data%}
-        <div class="col-md-2 offset-md-2">
-            <img class="item" src="{{'.'+item.path}}" alt="{{item.name}}">
-            <div class="inner">
-                <p>{{item.name}}</p>
+        <div class="col-md-4">
+            <div class="box">
+                <img class="item" src="{{item.path}}" alt="{{item.name}}">
+                <p class="item_name">{{item.name}}</p>
+                <p class="item_caption">{{item.caption}}</p>
+                <button class="item_btn btn btn-outline-warning btn-block" id="{{item.id}}">注文</button>
             </div>
-            <hr>
         </div>
         {% endfor %}
     </div>

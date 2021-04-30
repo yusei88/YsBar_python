@@ -7,10 +7,10 @@ header h1{
     text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #fff, 0 0 40px #ff0040, 0 0 70px #ff0040, 0 0 80px #ff0040, 0 0 100px #ff0040, 0 0 150px #ff0040;
     }
 body{
-    background-color: black;
+    background-color: #2f5d62;
     padding: 10px;
     font-size: 14px;
-    color: white;
+    color: #ffb037;
 }
 .top{
     width:100%;
@@ -32,8 +32,13 @@ body{
 }
 hr{
     border-width: 4px;
-    border-color: white;
+    border-color: rgb(0, 0, 0);
     margin: 0;
+}
+.box{
+    border: 1px #333;
+    background-color: #364547;
+    height: 500px;
 }
 .item{
     box-shadow: 0 0 3px 1px rgba(255, 255, 255, 0.3) inset;
@@ -48,6 +53,21 @@ hr{
 }
 .item:hover{
     opacity: .5;
+}
+.item_name{
+    font-size: 1.8em;
+    font-weight: none;
+    text-align: center;
+    border: rgb(255, 255, 255) 2px;
+    background:linear-gradient(#364547 70%, #ffe268);
+}
+.item_caption{
+    font-size: 1.2em;
+    height: 80px;
+    margin:10px;
+}
+.item_btn{
+    margin:10px,0;
 }
 .inner{
     text-align: center;
