@@ -89,7 +89,7 @@ def login_post():
             print("ユーザー名かPasswordが間違っています。")
             return render_template('/login.html',title="ログイン",miss=True)
 
-@app.route('/gin',methods=['GET'])
+@app.route('/menu',methods=['GET'])
 def menu():
     session = sessionmaker(bind=engine)()#db用のsessionの作成
     data = session.query(Menu).all()
