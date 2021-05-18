@@ -1,7 +1,7 @@
 # YsBar_python
 バーで使えるようなオンラインでカクテルを注文できるサイト
 # DEMO
-https://user-images.githubusercontent.com/47327761/118578328-eba81180-b7c6-11eb-9526-7f50652e0a4b.gif
+![order_demo](https://user-images.githubusercontent.com/47327761/118578328-eba81180-b7c6-11eb-9526-7f50652e0a4b.gif)
 
 このように注文ボタンを押すとオーダーリストに追加されます。
 
