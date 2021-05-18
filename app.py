@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect, session
+from flask.helpers import url_for
 from flask.wrappers import Response
 from sqlalchemy import create_engine, Column, Integer, String, DATETIME
 from sqlalchemy.ext.declarative import declarative_base
@@ -9,7 +10,7 @@ import os, hashlib
 app = Flask(__name__)
 
 #画像アップロードの設定
-UPLOAD_FOLDER = './static/uploads'
+UPLOAD_FOLDER = './static/uploads/'
 ALLOWED_EXTENSIONS = set(['png', 'jpg'])
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['SECRET_KEY'] = os.urandom(24)
@@ -94,11 +95,11 @@ def login_post():
 def menu():
     session = sessionmaker(bind=engine)()#db用のsessionの作成
     data = session.query(Menu).all()
-    return render_template('menu.html', title="gin",data=data)
+    return render_template('menu.html', title="メニュー",data=data)
 
 @app.route('/resister',methods=['GET'])
 def resist_get():
-    return render_template('menu_resist.html', title="メニュー登録")
+    return render_template('menu_resist.html', title="メニュー登録",message=False)
 
 @app.route('/resister',methods=['POST'])
 def resist_post():
@@ -117,11 +118,12 @@ def resist_post():
             session.add(new_menu)#追加
             session.commit()#コミット
             session.close()#sessionの解放
-            return '<p>登録しました。</p>'
+            msg="登録しました。"
         else:
-            return '<p>存在するメニューです</p>'
+            msg="既に存在するメニューです。"
     else:
-        return '<p>ファイルが不正です。</p>'
+        msg="不正なファイルです。"
+    return render_template('menu_resist.html', title="メニュー登録",message=msg)
 
 @app.route('/order',methods=['GET'])
 def order_get():
