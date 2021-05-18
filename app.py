@@ -15,6 +15,8 @@ ALLOWED_EXTENSIONS = set(['png', 'jpg'])
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['SECRET_KEY'] = os.urandom(24)
 
+upload_pswd = '91c16b8f0432317cbc43ec09e01f072180bd41994c9be5e0a7fd419b7caaeb8d'
+
 def allowed_file(filename):
     return '.' in filename and \
         filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
@@ -103,26 +105,30 @@ def resist_get():
 
 @app.route('/resister',methods=['POST'])
 def resist_post():
-    enter_name = request.form.get('name').strip()
-    enter_caption = request.form.get('caption').strip()
-    enter_base = request.form.get('base')
-    enter_img = request.files['img']
-    if enter_img and allowed_file(enter_img.filename):
-        session = sessionmaker(bind=engine)()#db用のsessionの作成
-        enter_img.save(os.path.join(app.config['UPLOAD_FOLDER'], enter_img.filename))
-        img_path = UPLOAD_FOLDER + enter_img.filename
-        exist = session.query(Menu).filter(Menu.name == enter_name).count()#カクテルの名前が登録されているか確認する
-        if exist == 0:#メニューに名前が登録されていなければ登録する
-            print("NewMenu!!Welcome!")
-            new_menu = Menu(name=enter_name,path=img_path,caption=enter_caption,base=enter_base)#インスタンス作成
-            session.add(new_menu)#追加
-            session.commit()#コミット
-            session.close()#sessionの解放
-            msg="登録しました。"
+    pswd = hashlib.sha256(request.form.get('pswd').strip().encode("utf-8")).hexdigest()
+    if (pswd == upload_pswd):
+        enter_name = request.form.get('name').strip()
+        enter_caption = request.form.get('caption').strip()
+        enter_base = request.form.get('base')
+        enter_img = request.files['img']
+        if enter_img and allowed_file(enter_img.filename):
+            session = sessionmaker(bind=engine)()#db用のsessionの作成
+            enter_img.save(os.path.join(app.config['UPLOAD_FOLDER'], enter_img.filename))
+            img_path = UPLOAD_FOLDER + enter_img.filename
+            exist = session.query(Menu).filter(Menu.name == enter_name).count()#カクテルの名前が登録されているか確認する
+            if exist == 0:#メニューに名前が登録されていなければ登録する
+                print("NewMenu!!Welcome!")
+                new_menu = Menu(name=enter_name,path=img_path,caption=enter_caption,base=enter_base)#インスタンス作成
+                session.add(new_menu)#追加
+                session.commit()#コミット
+                session.close()#sessionの解放
+                msg="登録しました。"
+            else:
+                msg="既に存在するメニューです。"
         else:
-            msg="既に存在するメニューです。"
+            msg="不正なファイルです。"
     else:
-        msg="不正なファイルです。"
+        msg = 'パスワードが違います。'
     return render_template('menu_resist.html', title="メニュー登録",message=msg)
 
 @app.route('/order',methods=['GET'])
