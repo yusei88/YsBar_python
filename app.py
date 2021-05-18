@@ -133,12 +133,17 @@ def order_get():
 
 @app.route('/order_list',methods=['POST'])
 def order_list_post():
-    #送信されたオーダーをDBに登録
-    order=request.form.get('order')
-    order_date=request.form.get('date')
     session = sessionmaker(bind=engine)()#db用のsessionの作成
-    new_order = Order(date=order_date,menu=order,user="test")#インスタンス作成
-    session.add(new_order)#追加
+    func = request.form.get('func')
+    if (func == "ADD"):
+        #送信されたオーダーをDBに登録
+        order=request.form.get('order')
+        order_date=request.form.get('date')
+        new_order = Order(date=order_date,menu=order,user="test")#インスタンス作成
+        session.add(new_order)#追加
+    elif(func == "DELETE"):
+        order = session.query(Order).filter_by(id=request.form.get('id')).one()#抽出
+        session.delete(order)
     session.commit()#コミット
     session.close()#sessionの解放
     return Response('OK')

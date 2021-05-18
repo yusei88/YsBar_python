@@ -83,3 +83,48 @@ hr{
     font-size: 25px;
     font-family:'Train One', cursive;
 }
+.neon {
+    display: inline-block;
+    color: #fff;
+    letter-spacing: .05em;
+    font-size: 5em;
+    text-shadow: 0 1px 30px #fbe416, 0 0 12px #fff, 2px 5px 60px #998b0a;
+}
+.neon > span {
+    -webkit-animation: blink 3s infinite alternate;
+    animation: blink 3s infinite alternate;
+}
+@-webkit-keyframes blink {
+40% {
+    opacity: .85;
+}
+42% {
+    opacity: .4;
+}
+43% {
+    opacity: .85;
+}
+45% {
+    opacity: .4;
+}
+46% {
+    opacity: .85;
+}
+}
+@keyframes blink {
+40% {
+    opacity: .85;
+}
+42% {
+    opacity: .4;
+}
+43% {
+    opacity: .85;
+}
+45% {
+    opacity: .4;
+}
+46% {
+    opacity: .85;
+}
+}

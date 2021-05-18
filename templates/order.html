@@ -8,6 +8,7 @@
             <th scope="col">時刻</th>
             <th scope="col">注文者</th>
             <th scope="col">注文品</th>
+            <th scope="col">作成完了</th>
           </tr>
         </thead>
         <tbody>
@@ -17,9 +18,33 @@
                 <td>{{item.date}}</td>
                 <td>{{item.user}}</td>
                 <td>{{item.menu}}</td>
+                <td><button class='btn_finish btn btn-primary' id='{{item.id}}'>完了</button></td>
             </tr>
             {% endfor %}
         </tbody>
       </table>
 </div>
+<script type="text/javascript">
+window.onload = function(){
+  /** jQueryの処理 */
+  $('.btn_finish').click(function(){
+    var order_id = $(this).attr('id');
+    $.ajax({
+      type:'POST',
+      url:'/order_list',
+      data:{
+        func:"DELETE",
+        id:order_id
+      },
+      success:function(){
+        console.log('削除成功')
+        alert('オーダー : '+order_id+' を完了しました。');
+      },
+      error:function(){
+        console.log('削除失敗');
+      }
+    });
+  });
+}
+</script>
 {% endblock %}
