@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="content">
+    <table class="table table-hover table-dark">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">時刻</th>
+            <th scope="col">注文者</th>
+            <th scope="col">注文品</th>
+          </tr>
+        </thead>
+        <tbody>
+            {% for item in data%}
+            <tr>
+                <th scope="row">{{item.id}}</th>
+                <td>{{item.date}}</td>
+                <td>{{item.user}}</td>
+                <td>{{item.menu}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+      </table>
+</div>
+{% endblock %}

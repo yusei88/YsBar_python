@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect, session
+from flask.wrappers import Response
 from sqlalchemy import create_engine, Column, Integer, String, DATETIME
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
@@ -37,9 +38,9 @@ class Menu(Base):
 class Order(Base):
     __tablename__ = 'order'
     id = Column(Integer,primary_key=True,autoincrement=True,nullable=False,unique=True)
-    date = Column(DATETIME,nullable=False)
-    user_id = Column(Integer,nullable=False)
-    menu_id = Column(Integer,nullable=False)
+    date = Column(String(100),nullable=False)
+    user = Column(String(100),nullable=False)
+    menu = Column(String(100),nullable=False)
 
 Base.metadata.create_all(bind=engine)#db作成の実行
 
@@ -93,7 +94,7 @@ def login_post():
 def menu():
     session = sessionmaker(bind=engine)()#db用のsessionの作成
     data = session.query(Menu).all()
-    return render_template('gin.html', title="gin",data=data)
+    return render_template('menu.html', title="gin",data=data)
 
 @app.route('/resister',methods=['GET'])
 def resist_get():
@@ -103,15 +104,16 @@ def resist_get():
 def resist_post():
     enter_name = request.form.get('name').strip()
     enter_caption = request.form.get('caption').strip()
+    enter_base = request.form.get('base')
     enter_img = request.files['img']
     if enter_img and allowed_file(enter_img.filename):
         session = sessionmaker(bind=engine)()#db用のsessionの作成
         enter_img.save(os.path.join(app.config['UPLOAD_FOLDER'], enter_img.filename))
-        img_path = './static/uploads/' + enter_img.filename
+        img_path = UPLOAD_FOLDER + enter_img.filename
         exist = session.query(Menu).filter(Menu.name == enter_name).count()#カクテルの名前が登録されているか確認する
         if exist == 0:#メニューに名前が登録されていなければ登録する
             print("NewMenu!!Welcome!")
-            new_menu = Menu(name=enter_name,path=img_path,caption=enter_caption)#インスタンス作成
+            new_menu = Menu(name=enter_name,path=img_path,caption=enter_caption,base=enter_base)#インスタンス作成
             session.add(new_menu)#追加
             session.commit()#コミット
             session.close()#sessionの解放
@@ -120,6 +122,25 @@ def resist_post():
             return '<p>存在するメニューです</p>'
     else:
         return '<p>ファイルが不正です。</p>'
+
+@app.route('/order',methods=['GET'])
+def order_get():
+    session = sessionmaker(bind=engine)()#db用のsessionの作成
+    data = session.query(Order).all()
+    return render_template('order.html',title="オーダー",data=data)
+
+@app.route('/order_list',methods=['POST'])
+def order_list_post():
+    #送信されたオーダーをDBに登録
+    order=request.form.get('order')
+    order_date=request.form.get('date')
+    session = sessionmaker(bind=engine)()#db用のsessionの作成
+    new_order = Order(date=order_date,menu=order,user="test")#インスタンス作成
+    session.add(new_order)#追加
+    session.commit()#コミット
+    session.close()#sessionの解放
+    return Response('OK')
+
 
 if __name__ == "__main__":
     app.run(debug=True)

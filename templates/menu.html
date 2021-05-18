@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="content">
+    <div class="row">
+        {% for item in data%}
+        <div class="col-md-4">
+            <div class="box">
+                <img class="item" src="{{item.path}}" alt="{{item.name}}">
+                <p class="item_name">{{item.name}}</p>
+                <p class="item_caption">{{item.caption}}</p>
+                <button class="item_btn btn btn-outline-warning btn-block" value="{{item.name}}">注文</button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+<script type="text/javascript">
+window.onload = function(){
+    /** jQueryの処理 */
+    $('.item_btn').click(function () {
+        var order = $(this).attr('value');
+        var now = new Date();
+        var y = now.getFullYear();
+        var m = now.getMonth() + 1;
+        var d = now.getDate();
+        var h = now.getHours();
+        var mi = now.getMinutes();
+        var s = now.getSeconds();
+        var time_stamp = (y+'-'+m+'-'+d+'-'+h+':'+mi+':'+s);
+        data={'order':order,'date':time_stamp};
+        json = JSON.stringify(data);
+        // Ajax通信を開始する
+        $.ajax({
+            type: "POST",
+            url: '/order_list',
+            data:{
+                order:order,
+                date:time_stamp
+            },
+            success: function() {
+                console.log('成功');
+            },
+            error: function(){
+                console.log('失敗');
+            }
+        })
+    });
+};
+</script>
+{% endblock %}
