@@ -1,4 +1,5 @@
 .myvenv/
-static/uploads/
+main/static/
 ysbar.db
 Demo_Movie/
+config.py

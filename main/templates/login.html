@@ -2,11 +2,6 @@
 {% block content %}
 <div class="content offset-sm-2 col-sm-8">
     <h1>ログイン</h1>
-    {% if miss %}
-    <div class="alert alert-warning alert-dismissible fade show" role="alert">
-        <strong>ユーザー名かパスワードが間違っています。</strong>
-    </div>
-    {% endif %}
     <form action="/login" method="post">
         <div class="form-group">
             <label for="name">名前 <span class="badge badge-danger">必須</span></label>
@@ -16,7 +11,7 @@
             <label for="pswd">パスワード <span class="badge badge-danger">必須</span></label>
             <input type="password" name="pswd" id="pswd" class="form-control"required>
         </div>
-        <button type="submit" class="form-control btn btn-primary">送信する</button>
+        <button type="submit" class="form-control btn btn-primary">ログイン</button>
     </form>
 </div>
 {% endblock %}

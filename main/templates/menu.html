@@ -34,15 +34,14 @@ window.onload = function(){
             // Ajax通信を開始する
             $.ajax({
                 type: 'POST',
-                url: '/order_list',
+                url: '/api/orders',
                 data:{
-                    func:"ADD",
                     order:order,
                     date:time_stamp
                 },
                 success: function() {
                     console.log('成功');
-                    alert('「' + order + '」を注文しました！！')
+                    alert('「' + order + '」を注文しました！！');
                 },
                 error: function(){
                     console.log('失敗');
